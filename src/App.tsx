@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilSnapshot } from 'recoil';
 import './App.css';
 import Home from './pages/Home';
+
+function DebugObserver() {
+  const snapshot = useRecoilSnapshot();
+  useEffect(() => {
+    console.debug('The following atoms were modified:');
+    // @ts-ignore
+    for (const node of snapshot.getNodes_UNSTABLE({isModified: true})) {
+      console.debug(node.key, snapshot.getLoadable(node));
+    }
+  }, [snapshot]);
+
+  return null;
+}
 
 function App() {
   return (
     <RecoilRoot>
+      <DebugObserver />
       <Router>
         <div className='App'>
           <Home />
