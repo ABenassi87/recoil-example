@@ -53,6 +53,7 @@ export interface IPerson extends ICharacter {
   eyeColor: string;
   species: ISpecies[];
   mass: number;
+  image?: string;
 }
 
 export interface IPlanet extends IEntity {

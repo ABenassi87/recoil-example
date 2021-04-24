@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Stack, Text, Button } from "@chakra-ui/react"
+import { Box, Stack, Text, Button, Image } from "@chakra-ui/react";
 import { IPerson } from '../model';
 
 interface Props {
@@ -23,6 +23,7 @@ const CharacterSummaryCard: React.FunctionComponent<Props> = ({ character}) => {
         mt={{ base: 4, md: 0 }}
         ml={{ md: 6 }}
       >
+        <Image src={character.image} alt={character.name} width={32} />
         <Text
           fontWeight="bold"
           textTransform="uppercase"

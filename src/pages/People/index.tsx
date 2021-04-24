@@ -8,17 +8,15 @@ import CharacterSummaryCard from '../../components/CharacterSummaryCard';
 
 const People: React.FC = () => {
   const [map, setMap] = useRecoilState(characterMapState);
-  const [people, setPeople] = useState<IPerson[]>([]);
 
   const getPeople = async () => {
     try {
       if (!map.size) {
         const people: IPerson[] = await api.listAllPeople();
-        setPeople(people);
         setMap(arrayToMap(people));
       }
     } catch (e) {
-      setPeople([]);
+      setMap(new Map());
     }
   };
 
@@ -28,7 +26,7 @@ const People: React.FC = () => {
 
   return (
     <div>
-      {people.map((person: IPerson) => (
+      {Array.from(map.values()).map((person: IPerson) => (
         <CharacterSummaryCard key={person.id} character={person} />
       ))}
     </div>
