@@ -15,7 +15,7 @@ export interface IMapEntityOptions {
   referenceFields?: string[];
 }
 
-export function extractIdFromEntityUrl(url: string): number {
+export function extractIdFromEntityUrl(url: any): number {
   // Trim the trailing slash off
   const match = url.match(/\/(\d+)\/$/);
   if (!match || match.length < 2) {

@@ -1,36 +1,26 @@
-import React, { useEffect } from 'react';
-import api from '../../swapi';
-import { useRecoilState } from 'recoil';
-import { characterMapState } from '../../atoms';
+import React from 'react';
+import { Loadable, useRecoilValueLoadable } from 'recoil';
 import { IPerson } from '../../model';
-import { arrayToMap } from '../../utils';
 import CharacterSummaryCard from '../../components/CharacterSummaryCard';
 import { Grid } from '@chakra-ui/react';
+import { allCharactersQuery } from '../../state/api';
 
-const People: React.FC = () => {
-  const [map, setMap] = useRecoilState(characterMapState);
+const People = () => {
+  const characters: Loadable<IPerson[]> = useRecoilValueLoadable<IPerson[]>(allCharactersQuery);
 
-  const getPeople = async () => {
-    try {
-      if (!map.size) {
-        const people: IPerson[] = await api.listAllPeople();
-        setMap(arrayToMap(people));
-      }
-    } catch (e) {
-      setMap(new Map());
-    }
-  };
+  const isLoading = characters.state === 'loading';
 
-  useEffect(() => {
-    getPeople();
-  }, []);
+  const data = !isLoading
+    ? characters.getValue().map((person: IPerson) => <CharacterSummaryCard key={person.id} character={person} />)
+    : [];
 
   return (
-    <Grid templateColumns="repeat(5, 1fr)" gap={6}>
-    {Array.from(map.values()).map((person: IPerson) => (
-        <CharacterSummaryCard key={person.id} character={person} />
-      ))}
-    </Grid>
+    <>
+      {isLoading && <div>Loading...</div>}
+      <Grid templateColumns='repeat(5, 1fr)' gap={6}>
+        {data}
+      </Grid>
+    </>
   );
 };
 

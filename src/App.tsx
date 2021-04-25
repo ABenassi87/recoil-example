@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { RecoilRoot, useRecoilSnapshot } from 'recoil';
 import './App.css';
@@ -9,7 +9,7 @@ function DebugObserver() {
   useEffect(() => {
     console.debug('The following atoms were modified:');
     // @ts-ignore
-    for (const node of snapshot.getNodes_UNSTABLE({isModified: true})) {
+    for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
       console.debug(node.key, snapshot.getLoadable(node));
     }
   }, [snapshot]);
@@ -20,12 +20,14 @@ function DebugObserver() {
 function App() {
   return (
     <RecoilRoot>
-      <DebugObserver />
-      <Router>
-        <div className='App'>
-          <Home />
-        </div>
-      </Router>
+      <Suspense fallback={<div>Loading...</div>}>
+        <DebugObserver />
+        <Router>
+          <div className='App'>
+            <Home />
+          </div>
+        </Router>
+      </Suspense>
     </RecoilRoot>
   );
 }

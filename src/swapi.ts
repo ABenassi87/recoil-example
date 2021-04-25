@@ -4,7 +4,7 @@ import mapEntity, { IMapEntityOptions, extractIdFromEntityUrl } from './map-enti
 export class SwApi {
   apiUrl: string;
 
-  constructor(url = 'https://swapi.dev/api') {
+  constructor(url = 'http://swapi.dev/api') {
     this.apiUrl = url;
   }
 
@@ -38,8 +38,16 @@ export class SwApi {
   }
 
   private async fetchArray<T extends IEntity>(apiPath: string, options?: IMapEntityOptions): Promise<T[]> {
-    const data = await this.makeApiCall(apiPath);
-    const results = data.results;
+    let data = await this.makeApiCall(apiPath);
+    let results: any[] = data?.results ?? [];
+    let nextUrl: string = data?.next ?? undefined;
+    while (!!nextUrl) {
+      const apiPath = nextUrl.replace(this.apiUrl, '');
+      data = await this.makeApiCall(apiPath);
+      results.push(...(data?.results ?? []));
+      nextUrl = data.next;
+    }
+
     if (!Array.isArray(results)) {
       throw new Error('The results is not a valid array');
     }
@@ -56,7 +64,7 @@ export class SwApi {
     return this.fetchArray<IFilm>('/films');
   }
 
-  public async listAllPeople(): Promise<IPerson[]> {
+  public async listAllCharacters(): Promise<IPerson[]> {
     let people = await this.fetchArray<IPerson>('/people');
     const images: any[] = await this.makeImagesApiCall();
     const imageMap = images.reduce((map, imageData) => {
@@ -68,10 +76,29 @@ export class SwApi {
   }
 
   public async getPerson(id: number, expand?: ('films' | 'vehicles' | 'homeworld' | 'starships')[]): Promise<IPerson> {
-    const data = await this.makeApiCall(`/people/${id}/`);
-    return mapEntity<IPerson>(data, {
+    const data: IPerson = await this.makeApiCall(`/people/${id}/`);
+    const person = mapEntity<IPerson>(data, {
       numberFields: ['mass'],
     });
+
+    const filmsIds: number[] | undefined = data.films?.map(extractIdFromEntityUrl);
+    const planetIds: number[] | undefined = [extractIdFromEntityUrl(data.homeworld)];
+
+    if (expand) {
+      if (expand.includes('films')) {
+        const films: IFilm[] = filmsIds ? await Promise.all(filmsIds.map((id) => this.getFilm(id))) : [];
+
+        person.films = films;
+      }
+
+      if (expand.includes('homeworld')) {
+        const homeword: IPlanet[] = planetIds ? await Promise.all(planetIds.map((id) => this.getPlanet(id))) : [];
+
+        person.homeworld = homeword[0];
+      }
+    }
+
+    return person;
   }
 
   public async getPlanet(id: number, expand?: ('residents' | 'films')[]): Promise<IPlanet> {

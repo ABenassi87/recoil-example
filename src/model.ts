@@ -9,11 +9,11 @@ export interface IEntity {
   edited: string;
   created: string;
   url: string;
-  films?: IFilm[];
+  films?: IFilm[] | string[];
 }
 
 export interface IFilm extends IEntity {
-  species: ISpecies[];
+  species: ISpecies[] | string[];
   releaseDate: string;
   title: string;
   producer: string;
@@ -57,6 +57,7 @@ export interface IPerson extends ICharacter {
 }
 
 export interface IPlanet extends IEntity {
+  name?: string;
   orbitalPeriod: number;
   climate: string;
   rotationPeriod: number;
