@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import api from '../../swapi';
 import { useRecoilState } from 'recoil';
 import { characterMapState } from '../../atoms';
 import { IPerson } from '../../model';
 import { arrayToMap } from '../../utils';
 import CharacterSummaryCard from '../../components/CharacterSummaryCard';
+import { Grid } from '@chakra-ui/react';
 
 const People: React.FC = () => {
   const [map, setMap] = useRecoilState(characterMapState);
@@ -25,11 +26,11 @@ const People: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      {Array.from(map.values()).map((person: IPerson) => (
+    <Grid templateColumns="repeat(5, 1fr)" gap={6}>
+    {Array.from(map.values()).map((person: IPerson) => (
         <CharacterSummaryCard key={person.id} character={person} />
       ))}
-    </div>
+    </Grid>
   );
 };
 

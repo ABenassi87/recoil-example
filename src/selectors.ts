@@ -9,7 +9,7 @@ import {
   starshipsMapState,
   vehiclesMapState,
 } from './atoms';
-import { IEntity, IFilm, IPerson, IStarship, IVehicle } from './model';
+import { IFilm, IPerson, IStarship, IVehicle } from './model';
 
 export const selectedCharacterState = getSelectedState<IPerson>('selectedCharacterState', characterMapState, selectedCharacterIdState);
 export const selectedMovieState = getSelectedState<IFilm>('selectedMovieState', moviesMapState, selectedMovieIdState);
