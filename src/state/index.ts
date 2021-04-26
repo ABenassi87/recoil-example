@@ -1,6 +1,8 @@
 import { atom, RecoilState, RecoilValueReadOnly, selector } from 'recoil';
 import { IFilm, IPerson, IStarship, IVehicle } from '../model';
 
+export const characterFilter = atom<string>({ key: 'characterFilter', default: '' });
+
 export const characterMapState = atom<Map<string, IPerson>>({
   key: 'characterMapState',
   default: new Map<string, IPerson>(),
