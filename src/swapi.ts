@@ -4,7 +4,7 @@ import mapEntity, { IMapEntityOptions, extractIdFromEntityUrl } from './map-enti
 export class SwApi {
   apiUrl: string;
 
-  constructor(url = 'http://swapi.dev/api') {
+  constructor(url = 'https://swapi.dev/api') {
     this.apiUrl = url;
   }
 
