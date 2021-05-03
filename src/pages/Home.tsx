@@ -1,13 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
 import { PageNavItem } from '../model';
-import { Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import People from './People';
 import PersonDetails from './People/PersonDetail';
-import Movies from './Movies';
-import Starships from './Starships';
-import Vehicles from './Vehicles';
 import PageTab from '../components/PageTab';
+import { RecoilRoot, useRecoilSnapshot } from 'recoil';
 
 const navItems: PageNavItem[] = [
   {
@@ -15,61 +13,47 @@ const navItems: PageNavItem[] = [
     label: 'Characters',
     url: '/characters',
   },
-  {
-    id: 2,
-    label: 'Movies',
-    url: '/movies',
-  },
-  {
-    id: 3,
-    label: 'Starships',
-    url: '/starships',
-  },
-  {
-    id: 4,
-    label: 'Vehicles',
-    url: '/vehicles',
-  },
 ];
 
 const generateTabs = () => {
   return navItems.map((item) => <PageTab key={item.id} navItem={item} />);
 };
 
-const Home: React.FC = () => {
+function DebugObserver() {
+  const snapshot = useRecoilSnapshot();
+  useEffect(() => {
+    console.debug('The following atoms were modified:');
+    // @ts-ignore
+    for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
+      console.debug(node.key, snapshot.getLoadable(node));
+    }
+  }, [snapshot]);
+
+  return null;
+}
+
+const Home: React.FunctionComponent = () => {
   return (
-    <Tabs>
-      <TabList>
-        {generateTabs()}
-      </TabList>
-      <Switch>
-        <TabPanels>
-          <TabPanel>
-            <Route path='/characters' exact>
-              <People />
-            </Route>
-            <Route path='/characters/:id' exact>
-              <PersonDetails />
-            </Route>
-          </TabPanel>
-          <TabPanel>
-            <Route path='/movies' exact>
-              <Movies />
-            </Route>
-          </TabPanel>
-          <TabPanel>
-            <Route path='/starships' exact>
-              <Starships />
-            </Route>
-          </TabPanel>
-          <TabPanel>
-            <Route path='/vehicles' exact>
-              <Vehicles />
-            </Route>
-          </TabPanel>
-        </TabPanels>
-      </Switch>
-    </Tabs>
+    <RecoilRoot>
+      <Router>
+        <DebugObserver />
+        <Tabs>
+          <TabList>{generateTabs()}</TabList>
+          <Switch>
+            <TabPanels>
+              <TabPanel>
+                <Route path='/characters' exact>
+                  <People />
+                </Route>
+                <Route path='/characters/:id' exact>
+                  <PersonDetails />
+                </Route>
+              </TabPanel>
+            </TabPanels>
+          </Switch>
+        </Tabs>
+      </Router>
+    </RecoilRoot>
   );
 };
 

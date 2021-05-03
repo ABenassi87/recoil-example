@@ -1,17 +1,19 @@
-import React from 'react';
-import { IPerson, ISpecies } from '../../model';
+import React, { useEffect } from 'react';
+import { IPerson, ISpecies } from '../../../model';
 import { useParams } from 'react-router-dom';
-import { useRecoilValueLoadable } from 'recoil';
 import { Badge, Box, Image, Center } from '@chakra-ui/react';
-import { characterQuery } from '../../state/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCharacter, selectCharacter, selectIsLoadingCharacter } from '../../state/sw.slice';
 
 const PersonDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const person = useRecoilValueLoadable<IPerson | undefined>(characterQuery(parseInt(id)));
+  const personData: IPerson | undefined = useSelector(selectCharacter);
+  const isLoading = useSelector(selectIsLoadingCharacter);
+  const dispatch = useDispatch();
 
-  const isLoading = person.state === 'loading';
-
-  const personData: IPerson | undefined = person.getValue();
+  useEffect(() => {
+    dispatch(fetchCharacter(id));
+  }, []);
 
   return (
     <>

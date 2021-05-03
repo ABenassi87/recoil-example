@@ -4,7 +4,7 @@ import mapEntity, { IMapEntityOptions, extractIdFromEntityUrl } from './map-enti
 export class SwApi {
   apiUrl: string;
 
-  constructor(url = 'https://swapi.dev/api') {
+  constructor(url = 'http://swapi.dev/api') {
     this.apiUrl = url;
   }
 
@@ -22,7 +22,7 @@ export class SwApi {
     return resp.json();
   }
 
-  private async makeImagesApiCall(): Promise<any> {
+  async makeImagesApiCall(): Promise<any> {
     const apiPath = `https://rawcdn.githack.com/akabab/starwars-api/0.2.1/api/all.json`;
     const resp = await fetch(apiPath, {
       headers: {

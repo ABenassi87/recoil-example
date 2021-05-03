@@ -16,7 +16,7 @@ export const allCharactersQuery = selector<IPerson[]>({
 });
 
 export const charactersFilteredQuery = selectorFamily<IPerson[], string>({
-  key: 'all-characters',
+  key: 'filtered-characters',
   get: (searchTerm: string) => async ({ get }) => {
     try {
       const characters: IPerson[] = get(allCharactersQuery);
@@ -33,9 +33,12 @@ export const charactersFilteredQuery = selectorFamily<IPerson[], string>({
 
 export const characterQuery = selectorFamily<IPerson | undefined, number>({
   key: 'character',
-  get: (id: number) => async () => {
+  get: (id: number) => async ({ get }) => {
     try {
-      const character: IPerson = await api.getPerson(id, ['films', 'vehicles', 'homeworld', 'starships']);
+      let character: IPerson = await api.getPerson(id, ['films', 'vehicles', 'homeworld', 'starships']);
+      const allCharacters: IPerson[] = get(allCharactersQuery);
+      const image = allCharacters.find((char) => char.id === id)?.image;
+      character = { ...character, image };
 
       return character;
     } catch (e) {
