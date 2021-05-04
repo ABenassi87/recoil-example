@@ -9,7 +9,7 @@ function App() {
     <Suspense fallback={<div>Loading...</div>}>
       <Router>
         <div className='App'>
-            <HomeRedux />
+            <Home />
         </div>
       </Router>
     </Suspense>

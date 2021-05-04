@@ -9,7 +9,7 @@ interface Props {
 
 const CharacterSummaryCard: React.FunctionComponent<Props> = ({ character }) => {
   const history = useHistory();
-  const handleClick = () => history.push(`/redux/characters/${character.id}`);
+  const handleClick = () => history.push(`/characters/${character.id}`);
 
   return (
     <Box p={4} display={{ md: 'flex' }} maxWidth='32rem' borderWidth={1} margin={2}>
